@@ -50,7 +50,7 @@ func WithDataBits(d int) Option {
 	}
 }
 
-type Parity = int64
+type Parity int64
 
 const (
 	ParityNone  Parity = 0x000
@@ -68,7 +68,7 @@ func WithParity(p Parity) Option {
 		switch p {
 		case ParityNone, ParityOdd, ParityEven, ParityMark, ParitySpace:
 			c.controlOptions &= ^(syscall.PARODD | syscall.PARENB)
-			c.controlOptions |= p
+			c.controlOptions |= int64(p)
 			return nil
 		default:
 			return fmt.Errorf("invalid parity mode: %v", p)
@@ -76,7 +76,7 @@ func WithParity(p Parity) Option {
 	}
 }
 
-type StopBit = int64
+type StopBit int64
 
 const (
 	StopBitOne StopBit = ^syscall.CSTOPB
@@ -90,7 +90,7 @@ func WithStopBits(s StopBit) Option {
 	return func(c *SerialPort) error {
 		switch s {
 		case StopBitOne, StopBitTwo:
-			c.controlOptions |= s
+			c.controlOptions |= int64(s)
 			return nil
 		default:
 			return fmt.Errorf("invalid stop bits: %v", s)

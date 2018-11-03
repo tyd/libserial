@@ -33,9 +33,8 @@ func sysReadBaudRate(fd uintptr) uint64 {
 		unix.SYS_IOCTL, fd, unix.TIOCGETA, uintptr(unsafe.Pointer(tty)),
 	); err != 0 {
 		return 0
-	} else {
-		return tty.Cflag & 0x100f
 	}
+	return tty.Cflag & 0x100f
 }
 
 // open serial connection

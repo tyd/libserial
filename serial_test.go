@@ -18,11 +18,22 @@ package libserial
 
 import (
 	"flag"
+	"fmt"
+	"time"
 )
 
 var (
 	inputPty  string
 	outputPty string
+
+	testOptions = []Option{
+		WithBaudRate(9600),
+		WithDataBits(8),
+		WithParity(ParityNone),
+		WithReadTimeout(time.Second),
+		WithHardwareFlowControl(false),
+		WithSoftwareFlowControl(false),
+	}
 )
 
 func init() {
@@ -37,4 +48,20 @@ func init() {
 	if outputPty == "" {
 		panic("output pty is nil")
 	}
+}
+
+func getSerialPort() (reader, writer *SerialPort) {
+	wOptions := append([]Option{WithDevice(inputPty)}, testOptions...)
+	w, err := Open(wOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
+	}
+
+	rOptions := append([]Option{WithDevice(outputPty)}, testOptions...)
+	r, err := Open(rOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
+	}
+
+	return r, w
 }

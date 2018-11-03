@@ -44,12 +44,12 @@ func WithBaudRate(rate int) Option {
 			return fmt.Errorf("invalid baud rate: %v", rate)
 		}
 		c.baudRate = uint64(rate)
-		if baudRate, ok := validBaudRates[rate]; !ok {
+		baudRate, ok := validBaudRates[rate]
+		if !ok {
 			return fmt.Errorf("invalid baud rate: %v", rate)
-		} else {
-			c.baudRate = uint64(baudRate)
-			return nil
 		}
+
+		c.baudRate = uint64(baudRate)
 		return nil
 	}
 }

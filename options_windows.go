@@ -28,10 +28,10 @@ func WithDataBits(d int) Option {
 		switch d {
 		case 5, 6, 7, 8:
 			c.dataBits = byte(d)
+			return nil
 		default:
 			return fmt.Errorf("invalid data bits: %v", d)
 		}
-		return nil
 	}
 }
 
