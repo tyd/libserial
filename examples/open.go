@@ -23,8 +23,7 @@ import (
 	"github.com/goiiot/libserial"
 )
 
-// ExampleSerial presents
-func ExampleSerial() {
+func ExampleOpen() {
 	conn, err := libserial.Open(
 		// set serial device to use
 		libserial.WithDevice("/dev/serial0"),
