@@ -1,8 +1,12 @@
-# libserial (WIP)
+# libserial
 
-Serial library for golang (no cgo required) (under heavy development)
+[![Build Status](https://travis-ci.com/goiiot/libserial.svg)](https://travis-ci.com/goiiot/libserial) [![GoDoc](https://godoc.org/github.com/goiiot/libserial?status.svg)](https://godoc.org/github.com/goiiot/libserial) [![GoReportCard](https://goreportcard.com/badge/goiiot/libserial)](https://goreportcard.com/report/github.com/goiiot/libserial) [![codecov](https://codecov.io/gh/goiiot/libserial/branch/master/graph/badge.svg)](https://codecov.io/gh/goiiot/libserial)
+
+Serial library for golang (no cgo required)
 
 ## LICENSE
+
+[![GitHub license](https://img.shields.io/github/license/goiiot/libserial.svg)](https://github.com/goiiot/libserial/blob/master/LICENSE.txt)
 
 ```text
 Copyright Go-IIoT (https://github.com/goiiot)

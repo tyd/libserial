@@ -1,0 +1,34 @@
+sudo: required
+language: go
+
+os:
+  - linux
+  - osx
+
+go:
+  - 1.11.x
+
+addons:
+  homebrew:
+    update: true
+    packages:
+    - socat
+  apt:
+    update: true
+    packages:
+    - socat
+
+before_script:
+  - make pty_start
+  - sleep 10
+  - export TEST_INPUT_PTY=$(cat socat.out | cut -d\  -f7 | sed -n 1p)
+  - export TEST_OUTPUT_PTY=$(cat socat.out | cut -d\  -f7 | sed -n 2p)
+  - export GO111MODULE=on
+  - make ensure
+
+script:
+  - make style_check
+  - make test ARGS="-i=${TEST_INPUT_PTY} -o=${TEST_OUTPUT_PTY}"
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
