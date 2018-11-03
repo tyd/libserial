@@ -118,7 +118,7 @@ RELEASE_LDFLAGS := \
 TEST_FLAGS := \
 	-v -race -failfast \
 	-covermode=atomic \
-	-coverprofile=$(FILE_COVERAGE)
+	-coverprofile=coverage.txt
 
 BENCH_FLAGS := \
 	-v -race -benchmem \
