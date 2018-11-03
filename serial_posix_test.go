@@ -1,3 +1,5 @@
+// +build !windows
+
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
  *
@@ -17,24 +19,21 @@
 package libserial
 
 import (
-	"flag"
+	"fmt"
 )
 
-var (
-	inputPty  string
-	outputPty string
-)
-
-func init() {
-	flag.StringVar(&inputPty, "i", "", "input pty file path")
-	flag.StringVar(&outputPty, "o", "", "input pty file path")
-	flag.Parse()
-
-	if inputPty == "" {
-		panic("input pty is nil")
+func getSerialPort() (reader, writer *SerialPort) {
+	wOptions := append([]Option{WithDevice(inputPty)}, testOptions...)
+	w, err := Open(wOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
 	}
 
-	if outputPty == "" {
-		panic("output pty is nil")
+	rOptions := append([]Option{WithDevice(outputPty)}, testOptions...)
+	r, err := Open(rOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
 	}
+
+	return r, w
 }

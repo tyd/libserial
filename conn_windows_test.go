@@ -1,3 +1,5 @@
+// +build windows
+
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
  *
@@ -17,24 +19,32 @@
 package libserial
 
 import (
-	"flag"
+	"bytes"
+	"testing"
+	"time"
 )
 
 var (
-	inputPty  string
-	outputPty string
+	testRWData = []byte("goiiot/libserial")
 )
 
-func init() {
-	flag.StringVar(&inputPty, "i", "", "input pty file path")
-	flag.StringVar(&outputPty, "o", "", "input pty file path")
-	flag.Parse()
+func TestReadWrite(t *testing.T) {
+	r, w := getSerialPort()
 
-	if inputPty == "" {
-		panic("input pty is nil")
+	_, err := w.Write(testRWData)
+	if err != nil {
+		t.Errorf("write data failed: %v", err)
 	}
 
-	if outputPty == "" {
-		panic("output pty is nil")
+	time.Sleep(time.Second)
+
+	buf := make([]byte, len(testRWData))
+	_, err = r.Read(buf)
+	if err != nil {
+		t.Errorf("read data failed: %v", err)
+	}
+
+	if !bytes.Equal(testRWData, buf) {
+		t.Errorf("target: %v, result: %v", testRWData, buf)
 	}
 }

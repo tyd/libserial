@@ -1,3 +1,5 @@
+// +build !windows
+
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
  *
@@ -15,26 +17,3 @@
  */
 
 package libserial
-
-import (
-	"flag"
-)
-
-var (
-	inputPty  string
-	outputPty string
-)
-
-func init() {
-	flag.StringVar(&inputPty, "i", "", "input pty file path")
-	flag.StringVar(&outputPty, "o", "", "input pty file path")
-	flag.Parse()
-
-	if inputPty == "" {
-		panic("input pty is nil")
-	}
-
-	if outputPty == "" {
-		panic("output pty is nil")
-	}
-}

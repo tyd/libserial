@@ -49,13 +49,14 @@ func ExampleSerial() {
 		}()
 
 		for {
-			data, err := conn.ReadByte()
+			buf := make([]byte, 1)
+			_, err := conn.Read(buf[:])
 			if err != nil {
 				conn.Close()
 				return
 			}
 
-			rCh <- data
+			rCh <- buf[0]
 		}
 	}()
 
@@ -74,7 +75,7 @@ func ExampleSerial() {
 					return
 				}
 
-				conn.WriteByte(data)
+				conn.Write([]byte{data})
 			case <-t.C:
 				println("one second passed")
 			}
