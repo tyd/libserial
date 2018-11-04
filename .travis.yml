@@ -4,6 +4,7 @@ language: go
 os:
   - linux
   - osx
+  - windows
 
 go:
   - 1.11.x
@@ -18,11 +19,10 @@ addons:
     packages:
     - socat
 
+install:
+  - ./.travis/install.sh
+
 before_script:
-  - make pty_start
-  - sleep 10
-  - export TEST_INPUT_PTY=$(cat socat.out | cut -d\  -f7 | sed -n 1p)
-  - export TEST_OUTPUT_PTY=$(cat socat.out | cut -d\  -f7 | sed -n 2p)
   - export GO111MODULE=on
   - make ensure
 
