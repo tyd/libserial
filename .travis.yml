@@ -20,7 +20,7 @@ addons:
     - socat
 
 install:
-  - ./.travis/install.sh
+  - source ./.travis/install.sh
 
 before_script:
   - export GO111MODULE=on
