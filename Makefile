@@ -15,14 +15,14 @@
 -include ../common/os.mk
 
 # app binary output name
-BINARY = foo
+BINARY = libserial
 # add ext name (.exe) when running in windows
 ifeq ($(NATIVE_OS),windows)
 	BINARY := $(BINARY).exe
 endif
 
 # app main source file
-FILE_BINARY_SOURCE = example/main.go
+FILE_BINARY_SOURCE = cmd/libserial/main.go
 # args for go test -run or go test -bench
 RUN ?= .
 # app arguments

@@ -24,26 +24,10 @@ import (
 // Option for serial conn options
 type Option func(c *SerialPort) error
 
-// WithDevice set serial device
-func WithDevice(dev string) Option {
-	return func(c *SerialPort) error {
-		if dev == "" {
-			return fmt.Errorf("invalid empty device")
-		}
-		c.dev = dev
-
-		return nil
-	}
-}
-
 // WithBaudRate set serial baud rate
 // default is 9600
 func WithBaudRate(rate int) Option {
 	return func(c *SerialPort) error {
-		if rate < 0 {
-			return fmt.Errorf("invalid baud rate: %v", rate)
-		}
-		c.baudRate = uint64(rate)
 		baudRate, ok := validBaudRates[rate]
 		if !ok {
 			return fmt.Errorf("invalid baud rate: %v", rate)
@@ -60,7 +44,6 @@ func WithReadTimeout(timeout time.Duration) Option {
 		if timeout > 0 {
 			s.readTimeout = timeout
 		}
-
 		return nil
 	}
 }

@@ -20,6 +20,7 @@ package libserial
 
 import (
 	"fmt"
+	"math"
 	"os"
 
 	"golang.org/x/sys/unix"
@@ -36,6 +37,20 @@ func (s *SerialPort) open() error {
 		return err
 	}
 
+	defer func() {
+		if err != nil {
+			f.Close()
+		}
+	}()
+
+	timeout := float64(0)
+	if s.readTimeout > 0 {
+		timeout = s.readTimeout.Seconds() / 10
+		if timeout > math.MaxUint8 {
+			timeout = math.MaxUint8
+		}
+	}
+
 	// check sys baud rate when baud rate not present
 	if s.baudRate == unix.B0 {
 		if s.baudRate = uint64(sysReadBaudRate(f.Fd())); s.baudRate == unix.B0 {
@@ -43,8 +58,7 @@ func (s *SerialPort) open() error {
 		}
 	}
 
-	if err = s.sysOpen(f); err != nil {
-		f.Close()
+	if err = s.sysOpen(f, uint8(timeout)); err != nil {
 		return err
 	}
 

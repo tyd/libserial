@@ -20,7 +20,6 @@ package libserial
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"unsafe"
 
@@ -38,15 +37,7 @@ func sysReadBaudRate(fd uintptr) uint32 {
 	}
 }
 
-func (s *SerialPort) sysOpen(f *os.File) error {
-	timeout := float64(0)
-	if s.readTimeout > 0 {
-		timeout = s.readTimeout.Seconds() / 10
-		if timeout > math.MaxUint8 {
-			timeout = math.MaxUint8
-		}
-	}
-
+func (s *SerialPort) sysOpen(f *os.File, timeout uint8) error {
 	tty := &unix.Termios{
 		Cflag:  unix.CREAD | unix.CLOCAL | uint32(s.baudRate) | uint32(s.controlOptions),
 		Ispeed: uint32(s.baudRate),
@@ -58,7 +49,7 @@ func (s *SerialPort) sysOpen(f *os.File) error {
 
 	// non block for read
 	tty.Cc[unix.VMIN] = 1
-	tty.Cc[unix.VTIME] = uint8(timeout)
+	tty.Cc[unix.VTIME] = timeout
 
 	if _, _, err := unix.Syscall(
 		unix.SYS_IOCTL, f.Fd(), unix.TCSETS, uintptr(unsafe.Pointer(tty)),

@@ -35,11 +35,12 @@ const (
 	PurgeComm       = "PurgeComm"
 )
 
-var comSyscallList = []string{
-	SetCommState, SetupComm, SetCommTimeouts, SetCommMask, PurgeComm,
-}
-
-var comSyscall = map[string]func(s *SerialPort) error{}
+var (
+	comSyscall     = map[string]func(s *SerialPort) error{}
+	comSyscallList = []string{
+		SetCommState, SetupComm, SetCommTimeouts, SetCommMask, PurgeComm,
+	}
+)
 
 func (s *SerialPort) sysOpen() error {
 	f, err := os.OpenFile(s.dev, os.O_RDWR, 0)
@@ -153,7 +154,7 @@ func init() {
 			Parity:   s.parity,
 		}
 
-		DCB.DCBLength = uint32(unsafe.Sizeof(unsafe.ArbitraryType(*DCB)))
+		DCB.DCBLength = uint32(unsafe.Sizeof(*DCB))
 
 		r, err := sys[SetCommState](s.f.Fd(), uintptr(unsafe.Pointer(DCB)))
 		if r == 0 {

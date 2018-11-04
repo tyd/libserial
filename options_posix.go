@@ -29,6 +29,18 @@ const (
 	serialFileFlag = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
 )
 
+// WithDevice set serial device
+func WithDevice(dev string) Option {
+	return func(c *SerialPort) error {
+		if dev == "" {
+			return fmt.Errorf("invalid empty device")
+		}
+
+		c.dev = dev
+		return nil
+	}
+}
+
 // WithDataBits set the data bits for SerialPort
 // available values are {5, 6, 7, 8, 9}
 // default is 8
