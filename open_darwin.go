@@ -1,4 +1,4 @@
-// +build linux
+// +build darwin,amd64
 
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
@@ -24,24 +24,26 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func sysReadBaudRate(fd uintptr) uint32 {
-	tty, err := unix.IoctlGetTermios(int(fd), unix.TCGETS)
+func sysReadBaudRate(fd uintptr) uint64 {
+	tty, err := unix.IoctlGetTermios(int(fd), unix.TIOCGETA)
 	if err != nil {
 		return 0
 	}
-
-	return tty.Cflag & unix.CBAUD
+	return tty.Cflag & 0x100f
 }
 
+// open serial connection
 func (s *SerialPort) sysOpen(f *os.File, timeout uint8) error {
-	_, err := unix.IoctlGetTermios(int(f.Fd()), unix.TCGETS)
+	_, err := unix.IoctlGetTermios(int(f.Fd()), unix.TIOCGETA)
 	if err != nil {
 		return err
 	}
 
 	tty := &unix.Termios{
-		Cflag: unix.CREAD | unix.CLOCAL | uint32(s.controlOptions),
-		Iflag: uint32(s.inputOptions),
+		Cflag:  unix.CREAD | unix.CLOCAL | uint64(s.controlOptions),
+		Iflag:  uint64(s.inputOptions),
+		Ispeed: uint64(s.baudRate),
+		Ospeed: uint64(s.baudRate),
 	}
 
 	if timeout == 0 {
@@ -51,11 +53,10 @@ func (s *SerialPort) sysOpen(f *os.File, timeout uint8) error {
 	// set read timeout
 	tty.Cc[unix.VTIME] = timeout
 
-	if err = unix.IoctlSetTermios(int(f.Fd()), unix.TCSETS, tty); err != nil {
+	if err = unix.IoctlSetTermios(int(f.Fd()), unix.TIOCSETA, tty); err != nil {
 		return err
 	}
 
-	// set blocking
 	// if err = unix.SetNonblock(int(f.Fd()), false); err != nil {
 	// 	return err
 	// }

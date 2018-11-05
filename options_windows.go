@@ -20,21 +20,6 @@ import (
 	"fmt"
 )
 
-// WithDevice ser serial device
-func WithDevice(dev string) Option {
-	return func(s *SerialPort) error {
-		if dev == "" {
-			return fmt.Errorf("invalid empty device")
-		}
-
-		s.dev = dev
-		if s.dev[0] != '\\' {
-			s.dev = "\\\\.\\" + s.dev
-		}
-		return nil
-	}
-}
-
 // WithDataBits set the data bits for SerialPort
 // available values are {5, 6, 7, 8, 9}
 // default is 8
@@ -50,16 +35,6 @@ func WithDataBits(d int) Option {
 	}
 }
 
-type Parity byte
-
-const (
-	ParityNone  Parity = 0
-	ParityOdd   Parity = 1
-	ParityEven  Parity = 2
-	ParityMark  Parity = 3
-	ParitySpace Parity = 4
-)
-
 // WithParity set parity mode
 // available values are {ParityNone, ParityOdd, ParityEven}
 // default is ParityNone
@@ -74,14 +49,6 @@ func WithParity(p Parity) Option {
 		}
 	}
 }
-
-type StopBit byte
-
-const (
-	StopBitOne     StopBit = 0
-	StopBitOneHalf StopBit = 1
-	StopBitTwo     StopBit = 2
-)
 
 // WithStopBits set stop bits for SerialPort port
 // available values are {StopBitOne, StopBitOneHalf, StopBitTwo}

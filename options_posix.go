@@ -20,26 +20,9 @@ package libserial
 
 import (
 	"fmt"
-	"syscall"
 
 	"golang.org/x/sys/unix"
 )
-
-const (
-	serialFileFlag = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
-)
-
-// WithDevice set serial device
-func WithDevice(dev string) Option {
-	return func(c *SerialPort) error {
-		if dev == "" {
-			return fmt.Errorf("invalid empty device")
-		}
-
-		c.dev = dev
-		return nil
-	}
-}
 
 // WithDataBits set the data bits for SerialPort
 // available values are {5, 6, 7, 8, 9}
@@ -48,29 +31,19 @@ func WithDataBits(d int) Option {
 	return func(c *SerialPort) error {
 		switch d {
 		case 5:
-			c.controlOptions |= syscall.CS5
+			c.controlOptions |= unix.CS5
 		case 6:
-			c.controlOptions |= syscall.CS6
+			c.controlOptions |= unix.CS6
 		case 7:
-			c.controlOptions |= syscall.CS7
+			c.controlOptions |= unix.CS7
 		case 8:
-			c.controlOptions |= syscall.CS8
+			c.controlOptions |= unix.CS8
 		default:
 			return fmt.Errorf("invalid data bits: %v", d)
 		}
 		return nil
 	}
 }
-
-type Parity int64
-
-const (
-	ParityNone  Parity = 0x000
-	ParityOdd   Parity = syscall.PARODD | syscall.PARENB
-	ParityEven  Parity = ^syscall.PARODD | syscall.PARENB
-	ParityMark  Parity = syscall.PARMRK | syscall.PARENB
-	ParitySpace Parity = ^syscall.PARMRK | syscall.PARENB
-)
 
 // WithParity set parity mode
 // available values are {ParityNone, ParityOdd, ParityEven}
@@ -79,21 +52,14 @@ func WithParity(p Parity) Option {
 	return func(c *SerialPort) error {
 		switch p {
 		case ParityNone, ParityOdd, ParityEven, ParityMark, ParitySpace:
-			c.controlOptions &= ^(syscall.PARODD | syscall.PARENB)
-			c.controlOptions |= int64(p)
+			c.controlOptions &= ^uint64(unix.PARODD | unix.PARENB)
+			c.controlOptions |= uint64(p)
 			return nil
 		default:
 			return fmt.Errorf("invalid parity mode: %v", p)
 		}
 	}
 }
-
-type StopBit int64
-
-const (
-	StopBitOne StopBit = ^syscall.CSTOPB
-	StopBitTwo StopBit = syscall.CSTOPB
-)
 
 // WithStopBits set stop bits for SerialPort port
 // available values are {StopBitOne, StopBitOneHalf, StopBitTwo}
@@ -102,7 +68,7 @@ func WithStopBits(s StopBit) Option {
 	return func(c *SerialPort) error {
 		switch s {
 		case StopBitOne, StopBitTwo:
-			c.controlOptions |= int64(s)
+			c.controlOptions |= uint64(s)
 			return nil
 		default:
 			return fmt.Errorf("invalid stop bits: %v", s)
@@ -114,9 +80,9 @@ func WithStopBits(s StopBit) Option {
 func WithSoftwareFlowControl(enable bool) Option {
 	return func(c *SerialPort) error {
 		if enable {
-			c.inputOptions |= syscall.IXON | syscall.IXOFF | syscall.IXANY
+			c.inputOptions |= uint64(unix.IXON | unix.IXOFF | unix.IXANY)
 		} else {
-			c.inputOptions &= ^(syscall.IXON | syscall.IXOFF | syscall.IXANY)
+			c.inputOptions &= ^uint64(unix.IXON | unix.IXOFF | unix.IXANY)
 		}
 		return nil
 	}
@@ -126,9 +92,9 @@ func WithSoftwareFlowControl(enable bool) Option {
 func WithHardwareFlowControl(enable bool) Option {
 	return func(c *SerialPort) error {
 		if enable {
-			c.controlOptions |= unix.CRTSCTS
+			c.controlOptions |= uint64(unix.CRTSCTS)
 		} else {
-			c.controlOptions &= ^unix.CRTSCTS
+			c.controlOptions &= ^uint64(unix.CRTSCTS)
 		}
 		return nil
 	}

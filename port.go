@@ -26,14 +26,19 @@ type SerialPort struct {
 	f *os.File
 
 	// options
-	dev            string
-	baudRate       uint64
-	readTimeout    time.Duration
-	dataBits       byte
-	stopBits       byte
-	parity         byte
-	inputOptions   int64
-	controlOptions int64
+	// common options
+	dev         string
+	readTimeout time.Duration
+
+	// options for windows
+	baudRate uint64
+	dataBits byte
+	stopBits byte
+	parity   byte
+
+	// options for posix/linux
+	inputOptions   uint64
+	controlOptions uint64
 }
 
 // Write bytes to serial connection
@@ -49,4 +54,8 @@ func (s *SerialPort) Read(data []byte) (int, error) {
 // Close serial connection
 func (s *SerialPort) Close() error {
 	return s.f.Close()
+}
+
+func (s *SerialPort) Flush() {
+
 }

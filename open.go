@@ -18,13 +18,14 @@ package libserial
 
 // Open serial port
 func Open(options ...Option) (*SerialPort, error) {
-	port := &SerialPort{}
-
-	// set defaults
-	port.baudRate = 9600
-	port.dataBits = 8
-	port.parity = byte(ParityNone)
-	port.stopBits = 1
+	// set defaults 9600 8N1
+	port := &SerialPort{
+		baudRate:       9600,
+		dataBits:       8,
+		parity:         byte(ParityNone),
+		stopBits:       1,
+		controlOptions: validBaudRates[9600] | uint64(ParityNone) | uint64(StopBitOne),
+	}
 
 	for _, setOption := range options {
 		if err := setOption(port); err != nil {

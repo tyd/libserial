@@ -72,7 +72,6 @@ func main() {
 		lib.WithStopBits(stopBits),
 		lib.WithSoftwareFlowControl(config.swCtrl),
 		lib.WithHardwareFlowControl(config.hwCtrl),
-		lib.WithReadTimeout(10*time.Millisecond),
 	)
 
 	if err != nil {

@@ -118,7 +118,7 @@ RELEASE_LDFLAGS := \
 TEST_FLAGS := \
 	-v -race -failfast \
 	-covermode=atomic \
-	-coverprofile=coverage.txt
+	-coverprofile=$(FILE_COVERAGE)
 
 BENCH_FLAGS := \
 	-v -race -benchmem \
@@ -154,7 +154,7 @@ release: $(DIR_DIST)
 #
 
 FILE_TEST_BIN = $(DIR_TEST)/$(BINARY).test
-FILE_COVERAGE = $(DIR_TEST)/coverage.txt
+FILE_COVERAGE = coverage.txt
 
 .PHONY: test coverage
 
@@ -246,8 +246,9 @@ profile_all_stop: \
 fmt:
 	gofmt -s -w .
 
-style_check:
-	set -e; gofmt -s -e -d . 1>&2
+style_check: $(DIR_TEST)
+	gofmt -s -e -d . | tee $(DIR_TEST)/fmt.out
+	grep -q 'diff' $(DIR_TEST)/fmt.out; test $$? -eq 1
 
 #
 # Dependency management
