@@ -12,6 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Enable oneshell
+#.ONESHELL:
+
+# Use custom interpreter
+SHELL = /bin/bash
+.SHELLFLAGS = -c
+
 -include ../common/os.mk
 
 # app binary output name
@@ -106,29 +113,6 @@ ifeq ($(VERSION),)
 	VERSION = none
 endif
 
-LDFLAGS := \
-	-X main.branch=$(BRANCH) \
-	-X main.commit=$(COMMIT) \
-	-X main.version=$(VERSION) \
-	-X main.goVersion=$(GOVERSION)
-
-RELEASE_LDFLAGS := \
-	-w -s $(LDFLAGS)
-
-TEST_FLAGS := \
-	-v -race -failfast \
-	-covermode=atomic \
-	-coverprofile=$(FILE_COVERAGE)
-
-BENCH_FLAGS := \
-	-v -race -benchmem \
-	-trace=$(FILE_TRACE_PROFILE) \
-	-blockprofile=$(FILE_BLOCK_PROFILE) \
-	-cpuprofile=$(FILE_CPU_PROFILE) \
-	-memprofile=$(FILE_MEM_PROFILE) \
-	-mutexprofile=$(FILE_MUTEX_PROFILE) \
-	-o=$(FILE_TEST_BIN)
-
 #
 # Build and run
 #
@@ -136,17 +120,28 @@ BENCH_FLAGS := \
 FILE_BINARY = $(DIR_BUILD)/$(BINARY)
 FILE_RELEASE_BINARY = $(DIR_DIST)/$(BINARY)
 
+LDFLAGS := \
+	-X main.branch=$(BRANCH) \
+	-X main.commit=$(COMMIT) \
+	-X main.version=$(VERSION) \
+	-X main.goVersion=$(GOVERSION)
+
+BUILD_ARGS := -race -ldflags '$(LDFLAGS)'
+
+RELEASE_LDFLAGS := -w -s $(LDFLAGS)
+
+RELEASE_FLAGS := -ldflags='$(RELEASE_LDFLAGS)'
+
 .PHONY: build release run
 
 build: $(DIR_BUILD)
-	@echo native build for $(NATIVE_OS)_$(NATIVE_ARCH)
-	$(GO) build -ldflags '$(LDFLAGS)' -o $(FILE_BINARY) $(FILE_BINARY_SOURCE)
+	$(GO) build $(BUILD_ARGS) -o $(FILE_BINARY) $(FILE_BINARY_SOURCE)
 
 run: build
 	./$(FILE_BINARY) $(ARGS)
 
 release: $(DIR_DIST)
-	$(GO) build -ldflags '$(RELEASE_LDFLAGS)' -o $(FILE_RELEASE_BINARY) $(FILE_BINARY_SOURCE)
+	$(GO) build -buildmode=pie $(RELEASE_FLAGS) -o $(FILE_RELEASE_BINARY) $(FILE_BINARY_SOURCE)
 	$(UPX) --brute $(FILE_RELEASE_BINARY)
 
 #
@@ -155,6 +150,11 @@ release: $(DIR_DIST)
 
 FILE_TEST_BIN = $(DIR_TEST)/$(BINARY).test
 FILE_COVERAGE = coverage.txt
+
+TEST_FLAGS := \
+	-v -race -failfast \
+	-covermode=atomic \
+	-coverprofile=$(FILE_COVERAGE)
 
 .PHONY: test coverage
 
@@ -180,6 +180,15 @@ FILE_CPU_PROFILE = $(DIR_TEST)/cpuprofile.out
 FILE_MEM_PROFILE = $(DIR_TEST)/memprofile.out
 FILE_MUTEX_PROFILE = $(DIR_TEST)/mutexprofile.out
 FILE_TRACE_PROFILE = $(DIR_TEST)/trace.out
+
+BENCH_FLAGS := \
+	-v -race -benchmem \
+	-trace=$(FILE_TRACE_PROFILE) \
+	-blockprofile=$(FILE_BLOCK_PROFILE) \
+	-cpuprofile=$(FILE_CPU_PROFILE) \
+	-memprofile=$(FILE_MEM_PROFILE) \
+	-mutexprofile=$(FILE_MUTEX_PROFILE) \
+	-o=$(FILE_TEST_BIN)
 
 .PHONY: benchmark profile_cpu profile_mem profile_block profile_trace \
 		profile_all_start profile_all_stop

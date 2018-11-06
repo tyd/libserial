@@ -14,8 +14,8 @@ if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
   export CNC_INSTALL_COMX_COMX_PORTS=YES
   export CNC_INSTALL_SKIP_SETUP_PREINSTALL=NO
   # use cmd.exe to run install.bat
-  runas.exe /savecred /user:administrator 'cmd "/C com0com-setup.exe /S"'
-  cmd '/C "\"C:\Program Files (x86)\com0com\setupc\" install Portname=COM10 Portname=COM11"'
+  runas.exe /savecred /user:administrator 'cmd "/C com0com-setup.exe /S /D=%ProgramFiles%\com0com'
+  cmd '/C %ProgramFiles%\com0com\setupc install Portname=COM10 Portname=COM11'
 else
   # create virtual pty
   make pty_start
