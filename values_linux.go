@@ -78,12 +78,5 @@ var validBaudRates = map[int]uint32{
 }
 
 var (
-	maskBaudRate uint64
+	maskBaudRate = ^uint64(unix.CBAUD)
 )
-
-func init() {
-	for _, v := range validBaudRates {
-		maskBaudRate |= uint64(v)
-	}
-	maskBaudRate = ^maskBaudRate
-}

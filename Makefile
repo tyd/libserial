@@ -126,7 +126,7 @@ LDFLAGS := \
 	-X main.version=$(VERSION) \
 	-X main.goVersion=$(GOVERSION)
 
-BUILD_ARGS := -race -ldflags '$(LDFLAGS)'
+BUILD_ARGS := -ldflags '$(LDFLAGS)'
 
 RELEASE_LDFLAGS := -w -s $(LDFLAGS)
 
