@@ -25,9 +25,9 @@ import (
 )
 
 var (
-	inputPty  string
-	outputPty string
-
+	inputPty    string
+	outputPty   string
+	testRWData  = []byte("goiiot/libserial")
 	testOptions = []Option{
 		WithBaudRate(1200),
 		WithDataBits(8),
@@ -65,10 +65,6 @@ func getSerialPort() (reader, writer *SerialPort) {
 
 	return r, w
 }
-
-var (
-	testRWData = []byte("goiiot/libserial")
-)
 
 func TestReadWrite(t *testing.T) {
 	r, w := getSerialPort()
