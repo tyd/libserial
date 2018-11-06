@@ -42,7 +42,7 @@ var (
 	}
 )
 
-func (s *SerialPort) sysOpen() error {
+func (s *SerialPort) open() error {
 	f, err := os.OpenFile(s.dev, os.O_RDWR, 0)
 	if err != nil {
 		return err
@@ -76,7 +76,7 @@ func init() {
 	}
 
 	// set raw syscall via proc addresses
-	var sys = make(map[string]func(args ...uintptr) (uintptr, error))
+	var rawSyscall = make(map[string]func(args ...uintptr) (uintptr, error))
 	for _, name := range comSyscallList {
 		addr, err := win.GetProcAddress(dll, name)
 		if err != nil {

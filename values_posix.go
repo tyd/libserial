@@ -1,4 +1,4 @@
-// +build !windows,!linux
+// +build !windows
 
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
@@ -18,21 +18,7 @@
 
 package libserial
 
-import (
-	"golang.org/x/sys/unix"
-)
-
-type Parity uint64
-
-const (
-	ParityNone  = Parity(0)
-	ParityOdd   = Parity(unix.PARODD | unix.PARENB)
-	ParityEven  = ^Parity(unix.PARODD) | unix.PARENB
-	ParityMark  = Parity(unix.PARMRK | unix.PARENB)
-	ParitySpace = ^Parity(unix.PARMRK) | unix.PARENB
-)
-
-type StopBit uint64
+import "golang.org/x/sys/unix"
 
 const (
 	StopBitOne = ^StopBit(unix.CSTOPB)
@@ -40,38 +26,20 @@ const (
 )
 
 const (
-	serialFileFlag = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
+	parityEnable = unix.PARENB
+	ParityNone   = Parity(0)
+	ParityOdd    = Parity(unix.PARODD)
+	ParityEven   = ^Parity(unix.PARODD)
+	ParityMark   = Parity(unix.PARMRK)
+	ParitySpace  = ^Parity(unix.PARMRK)
 )
 
-var validBaudRates = map[int]uint64{
-	0:      unix.B0, // detect baud rate automatically
-	50:     unix.B50,
-	75:     unix.B75,
-	110:    unix.B110,
-	134:    unix.B134,
-	150:    unix.B150,
-	200:    unix.B200,
-	300:    unix.B300,
-	600:    unix.B600,
-	1200:   unix.B1200,
-	1800:   unix.B1800,
-	2400:   unix.B2400,
-	4800:   unix.B4800,
-	9600:   unix.B9600,
-	19200:  unix.B19200,
-	38400:  unix.B38400,
-	57600:  unix.B57600,
-	115200: unix.B115200,
-	230400: unix.B230400,
-}
-
-var (
-	maskBaudRate uint64
+const (
+	serialFileFlag   = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
+	softwareCtrlFlag = unix.IXON | unix.IXOFF | unix.IXANY
+	hardwareCtrlFlag = unix.CRTSCTS
+	dataBits5        = unix.CS5
+	dataBits6        = unix.CS6
+	dataBits7        = unix.CS7
+	dataBits8        = unix.CS8
 )
-
-func init() {
-	for _, v := range validBaudRates {
-		maskBaudRate |= v
-	}
-	maskBaudRate = ^maskBaudRate
-}

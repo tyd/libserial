@@ -18,9 +18,53 @@ package libserial
 
 import (
 	"bytes"
+	"flag"
+	"fmt"
 	"testing"
 	"time"
 )
+
+var (
+	inputPty  string
+	outputPty string
+
+	testOptions = []Option{
+		WithBaudRate(1200),
+		WithDataBits(8),
+		WithParity(ParityNone),
+		WithReadTimeout(time.Second),
+		WithHardwareFlowControl(false),
+		WithSoftwareFlowControl(false),
+	}
+)
+
+func init() {
+	flag.StringVar(&inputPty, "i", "", "input pty file path")
+	flag.StringVar(&outputPty, "o", "", "input pty file path")
+	flag.Parse()
+
+	if inputPty == "" {
+		panic("input pty is nil")
+	}
+
+	if outputPty == "" {
+		panic("output pty is nil")
+	}
+}
+
+func getSerialPort() (reader, writer *SerialPort) {
+	w, err := Open(inputPty, testOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
+	}
+
+	r, err := Open(outputPty, testOptions...)
+	if err != nil {
+		panic(fmt.Sprintf("fatal err: %v", err))
+	}
+
+	return r, w
+}
 
 var (
 	testRWData = []byte("goiiot/libserial")

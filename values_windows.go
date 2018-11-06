@@ -18,11 +18,10 @@
 
 package libserial
 
-import (
-	"unsafe"
-)
+import "unsafe"
 
 type Parity byte
+type StopBit byte
 
 const (
 	ParityNone  Parity = 0
@@ -31,8 +30,6 @@ const (
 	ParityMark  Parity = 3
 	ParitySpace Parity = 4
 )
-
-type StopBit byte
 
 const (
 	StopBitOne     StopBit = 0
@@ -49,7 +46,17 @@ type _dcb struct {
 	wReserved1                                     uint16
 }
 
-const _dcbSize = uint32(unsafe.Sizeof(_dcb{}))
+const (
+	_dcbSize         = uint32(unsafe.Sizeof(_dcb{}))
+	maskBaudRate     = uint64(0)
+	softwareCtrlFlag = 0
+	hardwareCtrlFlag = 0
+	parityEnable     = 0
+	dataBits5        = 0
+	dataBits6        = 0
+	dataBits7        = 0
+	dataBits8        = 0
+)
 
 var validBaudRates = map[int]uint32{
 	0:       0,
@@ -84,7 +91,3 @@ var validBaudRates = map[int]uint32{
 	3500000: 3500000,
 	4000000: 4000000,
 }
-
-var (
-	maskBaudRate uint64
-)

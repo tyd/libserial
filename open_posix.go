@@ -40,6 +40,8 @@ func (s *SerialPort) open() error {
 	defer func() {
 		if err != nil {
 			f.Close()
+		} else {
+			s.f = f
 		}
 	}()
 
@@ -53,15 +55,32 @@ func (s *SerialPort) open() error {
 
 	// check sys baud rate when baud rate not present
 	if s.baudRate == unix.B0 {
-		if s.baudRate = uint64(sysReadBaudRate(f.Fd())); s.baudRate == unix.B0 {
-			return fmt.Errorf("can't determine serial port baud rate")
+		tty, err := unix.IoctlGetTermios(int(f.Fd()), termiosReqGet)
+		s.baudRate = uint64(tty.Cflag) & maskBaudRate
+
+		if err != nil || s.baudRate == unix.B0 {
+			return fmt.Errorf("can't determine serial port baud rate: %v", err)
 		}
 	}
 
-	if err = s.sysOpen(f, uint8(timeout)); err != nil {
+	tty := &unix.Termios{
+		Cflag:  unix.CREAD | unix.CLOCAL | termiosFieldType(s.controlOptions),
+		Iflag:  termiosFieldType(s.inputOptions),
+		Ispeed: termiosFieldType(s.baudRate),
+		Ospeed: termiosFieldType(s.baudRate),
+	}
+
+	if timeout == 0 {
+		// set blocking read with at least 1 byte have read if no timeout defined
+		tty.Cc[unix.VMIN] = 1
+	}
+	// set read timeout
+	tty.Cc[unix.VTIME] = uint8(timeout)
+
+	err = unix.IoctlSetTermios(int(f.Fd()), termiosReqSet, tty)
+	if err != nil {
 		return err
 	}
 
-	s.f = f
 	return nil
 }

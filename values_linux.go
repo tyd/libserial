@@ -23,24 +23,13 @@ import (
 )
 
 type Parity uint32
-
-const (
-	ParityNone  = Parity(0)
-	ParityOdd   = Parity(unix.PARODD)
-	ParityEven  = ^Parity(unix.PARODD)
-	ParityMark  = Parity(unix.PARMRK)
-	ParitySpace = ^Parity(unix.PARMRK)
-)
-
 type StopBit uint32
+type termiosFieldType = uint32
 
 const (
-	StopBitOne = ^StopBit(unix.CSTOPB)
-	StopBitTwo = StopBit(unix.CSTOPB)
-)
-
-const (
-	serialFileFlag = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
+	termiosReqGet = uint(unix.TCGETS)
+	termiosReqSet = uint(unix.TCSETS)
+	maskBaudRate  = uint64(unix.CBAUD)
 )
 
 var validBaudRates = map[int]uint32{
@@ -76,7 +65,3 @@ var validBaudRates = map[int]uint32{
 	3500000: unix.B3500000,
 	4000000: unix.B4000000,
 }
-
-var (
-	maskBaudRate = ^uint64(unix.CBAUD)
-)
