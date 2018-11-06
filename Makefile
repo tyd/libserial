@@ -16,8 +16,8 @@
 #.ONESHELL:
 
 # Use custom interpreter
-SHELL = /bin/bash
-.SHELLFLAGS = -c
+# SHELL = /bin/bash
+# .SHELLFLAGS = -c
 
 -include ../common/os.mk
 
@@ -52,9 +52,9 @@ $(DIR_DIST):
 # Tools
 #
 
-GO = $(shell which go)
-GOFMT = $(shell which gofmt)
-GIT = $(shell which git)
+GO = go
+GOFMT = gofmt
+GIT = git
 UPX = $(shell which upx)
 DOCKER = $(shell which docker)
 
