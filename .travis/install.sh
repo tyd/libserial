@@ -3,8 +3,6 @@
 set -x
 
 if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
-  # set SHELL for make recipes
-  export SHELL=$(which bash)
   # create virtual com using com0com in windows
   export TEST_INPUT_PTY=COM10
   export TEST_OUTPUT_PTY=COM11

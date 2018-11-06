@@ -28,6 +28,7 @@ install:
 
 before_script:
   - export GO111MODULE=on
+  - export SHELL=/bin/bash # for windows make
   - make ensure
 
 script:
