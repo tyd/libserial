@@ -16,23 +16,44 @@
 
 package libserial
 
+import (
+	"errors"
+)
+
+var (
+	// ErrDeviceNameEmpty happens when opening a device with empty name
+	ErrDeviceNameEmpty = errors.New("device name should not be empty")
+)
+
 // Open serial port
-func Open(options ...Option) (*SerialPort, error) {
-	// set defaults 9600 8N1
-	port := &SerialPort{
-		baudRate:       9600,
-		dataBits:       8,
-		parity:         byte(ParityNone),
-		stopBits:       1,
-		controlOptions: validBaudRates[9600] | uint64(ParityNone) | uint64(StopBitOne),
+func Open(device string, options ...Option) (*SerialPort, error) {
+	if device == "" {
+		return nil, ErrDeviceNameEmpty
 	}
 
+	port := &SerialPort{dev: device}
+
+	// set defaults 9600 8N1
+	defaultOptions := []Option{
+		WithBaudRate(9600),
+		WithDataBits(8),
+		WithParity(ParityNone),
+		WithStopBits(StopBitOne),
+	}
+	for _, setDefaultOption := range defaultOptions {
+		if err := setDefaultOption(port); err != nil {
+			return nil, err
+		}
+	}
+
+	// set user defined options
 	for _, setOption := range options {
 		if err := setOption(port); err != nil {
 			return nil, err
 		}
 	}
 
+	// open platform specific serial port
 	if err := port.open(); err != nil {
 		return nil, err
 	}

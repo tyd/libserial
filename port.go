@@ -23,7 +23,9 @@ import (
 
 // SerialPort of serial
 type SerialPort struct {
-	f *os.File
+	// actions performer
+	f     *os.File
+	flush func()
 
 	// options
 	// common options
@@ -56,6 +58,7 @@ func (s *SerialPort) Close() error {
 	return s.f.Close()
 }
 
+// Flush serial input/output queue
 func (s *SerialPort) Flush() {
-
+	s.flush()
 }

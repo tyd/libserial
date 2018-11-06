@@ -29,6 +29,9 @@ import (
 // default is 8
 func WithDataBits(d int) Option {
 	return func(c *SerialPort) error {
+		// clear flags
+		c.controlOptions &= ^uint64(unix.CS5 | unix.CS6 | unix.CS7 | unix.CS8)
+
 		switch d {
 		case 5:
 			c.controlOptions |= unix.CS5
@@ -50,14 +53,19 @@ func WithDataBits(d int) Option {
 // default is ParityNone
 func WithParity(p Parity) Option {
 	return func(c *SerialPort) error {
+		// clear flags
+		c.controlOptions &= ^uint64(unix.PARODD | unix.PARMRK | unix.PARENB)
+
 		switch p {
-		case ParityNone, ParityOdd, ParityEven, ParityMark, ParitySpace:
-			c.controlOptions &= ^uint64(unix.PARODD | unix.PARENB)
-			c.controlOptions |= uint64(p)
-			return nil
+		case ParityNone:
+			// do nothing default is None
+		case ParityOdd, ParityEven, ParityMark, ParitySpace:
+			c.controlOptions |= uint64(p) | unix.PARENB
 		default:
 			return fmt.Errorf("invalid parity mode: %v", p)
 		}
+
+		return nil
 	}
 }
 
@@ -66,24 +74,32 @@ func WithParity(p Parity) Option {
 // default is StopBitOne
 func WithStopBits(s StopBit) Option {
 	return func(c *SerialPort) error {
+		// clear flags
+		c.controlOptions &= ^uint64(unix.CSTOPB)
+
 		switch s {
-		case StopBitOne, StopBitTwo:
+		case StopBitOne:
+			// do nothing
+		case StopBitTwo:
 			c.controlOptions |= uint64(s)
-			return nil
 		default:
 			return fmt.Errorf("invalid stop bits: %v", s)
 		}
+
+		return nil
 	}
 }
 
 // WithSoftwareFlowControl enable software flow control
 func WithSoftwareFlowControl(enable bool) Option {
 	return func(c *SerialPort) error {
+		// clear flags
+		c.inputOptions &= ^uint64(unix.IXON | unix.IXOFF | unix.IXANY)
+
 		if enable {
 			c.inputOptions |= uint64(unix.IXON | unix.IXOFF | unix.IXANY)
-		} else {
-			c.inputOptions &= ^uint64(unix.IXON | unix.IXOFF | unix.IXANY)
 		}
+
 		return nil
 	}
 }
@@ -91,11 +107,13 @@ func WithSoftwareFlowControl(enable bool) Option {
 // WithHardwareFlowControl enable hardware flow control
 func WithHardwareFlowControl(enable bool) Option {
 	return func(c *SerialPort) error {
+		// clear flags
+		c.controlOptions &= ^uint64(unix.CRTSCTS)
+
 		if enable {
 			c.controlOptions |= uint64(unix.CRTSCTS)
-		} else {
-			c.controlOptions &= ^uint64(unix.CRTSCTS)
 		}
+
 		return nil
 	}
 }

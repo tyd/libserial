@@ -5,12 +5,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	lib "github.com/goiiot/libserial"
 	"io"
 	"os"
 	"os/signal"
 	"sync"
-	"time"
+
+	lib "github.com/goiiot/libserial"
 )
 
 var config = struct {
@@ -64,8 +64,7 @@ func main() {
 		}
 	}()
 
-	s, err := lib.Open(
-		lib.WithDevice(config.device),
+	s, err := lib.Open(config.device,
 		lib.WithBaudRate(config.baudRate),
 		lib.WithDataBits(config.dataBits),
 		lib.WithParity(parityMode),
@@ -103,7 +102,6 @@ func main() {
 			case <-ctx.Done():
 				return
 			default:
-				// non block read
 				n, err := s.Read(buf[:])
 				if err != nil && err != io.EOF {
 					fmt.Printf("read from serial error: %v", err)
@@ -112,8 +110,6 @@ func main() {
 
 				if n > 0 {
 					print(string(buf[:n]))
-				} else {
-					time.Sleep(10 * time.Millisecond)
 				}
 			}
 		}

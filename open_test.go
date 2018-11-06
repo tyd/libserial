@@ -27,7 +27,7 @@ var (
 	outputPty string
 
 	testOptions = []Option{
-		WithBaudRate(9600),
+		WithBaudRate(1200),
 		WithDataBits(8),
 		WithParity(ParityNone),
 		WithReadTimeout(time.Second),
@@ -51,14 +51,12 @@ func init() {
 }
 
 func getSerialPort() (reader, writer *SerialPort) {
-	wOptions := append([]Option{WithDevice(inputPty)}, testOptions...)
-	w, err := Open(wOptions...)
+	w, err := Open(inputPty, testOptions...)
 	if err != nil {
 		panic(fmt.Sprintf("fatal err: %v", err))
 	}
 
-	rOptions := append([]Option{WithDevice(outputPty)}, testOptions...)
-	r, err := Open(rOptions...)
+	r, err := Open(outputPty, testOptions...)
 	if err != nil {
 		panic(fmt.Sprintf("fatal err: %v", err))
 	}

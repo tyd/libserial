@@ -24,18 +24,6 @@ import (
 // Option for serial conn options
 type Option func(c *SerialPort) error
 
-// WithDevice ser serial device
-func WithDevice(dev string) Option {
-	return func(s *SerialPort) error {
-		if dev == "" {
-			return fmt.Errorf("invalid empty device")
-		}
-
-		s.dev = dev
-		return nil
-	}
-}
-
 // WithBaudRate set serial baud rate
 // default is 9600
 func WithBaudRate(rate int) Option {

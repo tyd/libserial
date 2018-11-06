@@ -6,7 +6,7 @@ Serial library for golang (no cgo)
 
 ## Usage
 
-**TL;DR**: you can find a full example in [examples/open.go](./examples/open.go)
+**TL;DR**: you can find a full example in [cmd/libserial/main.go](./cmd/libserial/main.go)
 
 1.Import this package
 
@@ -20,22 +20,20 @@ import (
 2.Open serial connection and check error
 
 ```go
-conn, err := libserial.Open(
-    // set serial device to use
-    libserial.WithDevice("/dev/serial0"),
-    // set baud rate
-    libserial.WithBaudRate(9600),
-)
+// open serial port with default settings (9600 8N1)
+conn, err := libserial.Open("/dev/serial0")
 
 if err != nil {
     panic("hmm, how cloud it failed")
 }
 ```
 
+**Note**: You can add options when opening serial port, see [godoc - Option](https://godoc.org/github.com/goiiot/libserial#Option)
+
 3.Read/Write data from serial connection
 
 ```go
-buf := make([]byte, 1)
+buf := make([]byte, 64)
 _, err := conn.Read(buf[:])
 
 conn.Write([]byte{data})
