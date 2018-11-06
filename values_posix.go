@@ -64,3 +64,14 @@ var validBaudRates = map[int]uint64{
 	115200: unix.B115200,
 	230400: unix.B230400,
 }
+
+var (
+	maskBaudRate uint64
+)
+
+func init() {
+	for _, v := range validBaudRates {
+		maskBaudRate |= v
+	}
+	maskBaudRate = ^maskBaudRate
+}

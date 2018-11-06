@@ -34,6 +34,10 @@ func WithBaudRate(rate int) Option {
 		}
 
 		c.baudRate = uint64(baudRate)
+
+		// clear baud rate flags and set new baud rate
+		c.controlOptions &= maskBaudRate
+		c.controlOptions |= uint64(baudRate)
 		return nil
 	}
 }

@@ -84,3 +84,7 @@ var validBaudRates = map[int]uint32{
 	3500000: 3500000,
 	4000000: 4000000,
 }
+
+var (
+	maskBaudRate uint64
+)

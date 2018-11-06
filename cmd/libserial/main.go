@@ -105,6 +105,7 @@ func main() {
 				n, err := s.Read(buf[:])
 				if err != nil && err != io.EOF {
 					fmt.Printf("read from serial error: %v", err)
+					exit()
 					return
 				}
 
