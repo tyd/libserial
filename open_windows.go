@@ -43,6 +43,10 @@ var (
 )
 
 func (s *SerialPort) open() error {
+	if s.dev[0] != '\\' {
+		s.dev = `\\.\` + s.dev
+	}
+
 	f, err := os.OpenFile(s.dev, os.O_RDWR, 0)
 	if err != nil {
 		return err
@@ -80,12 +84,14 @@ func init() {
 	for _, name := range comSyscallList {
 		addr, err := win.GetProcAddress(dll, name)
 		if err != nil {
-			rawSyscall[name] = func(args ...uintptr) (uintptr, error) {
-				n := uintptr(len(args))
-				args = append(args, make([]uintptr, 3-n)...)
-				r, _, err := syscall.Syscall(addr, n, args[0], args[1], args[2])
-				return r, err
-			}
+			panic("init raw syscall failed")
+		}
+
+		rawSyscall[name] = func(args ...uintptr) (uintptr, error) {
+			n := uintptr(len(args))
+			args = append(args, make([]uintptr, 3-n)...)
+			r, _, err := syscall.Syscall(addr, n, args[0], args[1], args[2])
+			return r, err
 		}
 	}
 
