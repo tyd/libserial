@@ -81,17 +81,17 @@ func init() {
 
 	// set raw syscall via proc addresses
 	var rawSyscall = make(map[string]func(args ...uintptr) (uintptr, error))
-	for i := 0; i < len(comSyscallList); i++ {
-		addr, err := win.GetProcAddress(dll, comSyscallList[i])
+	for _, name := range comSyscallList {
+		addr, err := win.GetProcAddress(dll, name)
 		if err != nil {
 			panic("init raw syscall failed")
 		}
 
-		rawSyscall[comSyscallList[i]] = func(args ...uintptr) (uintptr, error) {
+		rawSyscall[name] = func(args ...uintptr) (uintptr, error) {
 			n := uintptr(len(args))
 			args = append(args, make([]uintptr, 3-n)...)
 			r, _, err := syscall.Syscall(addr, n, args[0], args[1], args[2])
-			return r, fmt.Errorf("syscall %s failed: %v", comSyscallList[i], err)
+			return r, fmt.Errorf("syscall %s failed: %v", name, err)
 		}
 	}
 
