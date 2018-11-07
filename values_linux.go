@@ -27,11 +27,13 @@ type StopBit uint32
 type termiosFieldType = uint32
 
 const (
-	termiosReqGet = uint(unix.TCGETS)
-	termiosReqSet = uint(unix.TCSETS)
-	maskBaudRate  = uint64(unix.CBAUD)
-	ParityMark    = Parity(unix.CMSPAR)
-	ParitySpace   = 0
+	termiosReqGet    = uint(unix.TCGETS)
+	termiosReqSet    = uint(unix.TCSETS)
+	termiosFlush     = uintptr(unix.TCFLSH)
+	termiosFlushType = uintptr(unix.TCIOFLUSH)
+	maskBaudRate     = uint64(unix.CBAUD)
+	ParityMark       = Parity(unix.CMSPAR)
+	ParitySpace      = 0
 )
 
 var validBaudRates = map[int]uint32{

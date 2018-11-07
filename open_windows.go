@@ -68,6 +68,10 @@ func (s *SerialPort) open() error {
 		}
 	}
 
+	s.flush = func() error {
+		return comSyscall[PurgeComm](s)
+	}
+
 	return nil
 }
 

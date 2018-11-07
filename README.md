@@ -24,7 +24,7 @@ import (
 conn, err := libserial.Open("/dev/serial0")
 
 if err != nil {
-    panic("hmm, how cloud it failed")
+    panic("hmm, how cloud it fail")
 }
 ```
 

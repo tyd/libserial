@@ -32,7 +32,7 @@ var (
 type SerialPort struct {
 	// actions performer
 	f     *os.File
-	flush func()
+	flush func() error
 
 	// options
 	// common options
@@ -66,8 +66,8 @@ func (s *SerialPort) Close() error {
 }
 
 // Flush serial input/output queue
-func (s *SerialPort) Flush() {
-	s.flush()
+func (s *SerialPort) Flush() error {
+	return s.flush()
 }
 
 // Open serial port

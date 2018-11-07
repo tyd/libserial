@@ -83,5 +83,10 @@ func (s *SerialPort) open() error {
 		return err
 	}
 
+	s.flush = func() error {
+		_, _, err := unix.Syscall(unix.SYS_IOCTL, f.Fd(), termiosFlush, termiosFlushType)
+		return err
+	}
+
 	return nil
 }
