@@ -19,6 +19,7 @@
 package libserial
 
 import (
+	"fmt"
 	"math"
 	"os"
 	"syscall"
@@ -55,11 +56,10 @@ func (s *SerialPort) open() error {
 	defer func() {
 		if err != nil {
 			f.Close()
-			return
 		}
-		s.f = f
 	}()
 
+	s.f = f
 	for _, name := range comSyscallList {
 		if name != PurgeComm {
 			if err = comSyscall[name](s); err != nil {
@@ -81,17 +81,17 @@ func init() {
 
 	// set raw syscall via proc addresses
 	var rawSyscall = make(map[string]func(args ...uintptr) (uintptr, error))
-	for _, name := range comSyscallList {
-		addr, err := win.GetProcAddress(dll, name)
+	for i := 0; i < len(comSyscallList); i++ {
+		addr, err := win.GetProcAddress(dll, comSyscallList[i])
 		if err != nil {
 			panic("init raw syscall failed")
 		}
 
-		rawSyscall[name] = func(args ...uintptr) (uintptr, error) {
+		rawSyscall[comSyscallList[i]] = func(args ...uintptr) (uintptr, error) {
 			n := uintptr(len(args))
 			args = append(args, make([]uintptr, 3-n)...)
 			r, _, err := syscall.Syscall(addr, n, args[0], args[1], args[2])
-			return r, err
+			return r, fmt.Errorf("syscall %s failed: %v", comSyscallList[i], err)
 		}
 	}
 
