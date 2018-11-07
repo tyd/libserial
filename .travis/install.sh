@@ -2,6 +2,8 @@
 
 set -x
 
+export TEST_BAUD_RATE=1200
+
 if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
   # create virtual com using com0com in windows
   export TEST_INPUT_PTY=COM10

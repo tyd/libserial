@@ -32,7 +32,8 @@ before_script:
 
 script:
   - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then make style_check; fi
-  - make test ARGS="-i=${TEST_INPUT_PTY} -o=${TEST_OUTPUT_PTY}"
+  - make test ARGS="-i=${TEST_INPUT_PTY} -o=${TEST_OUTPUT_PTY} -b=${TEST_BAUD_RATE}"
+  - bash ./.travis/check.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

@@ -29,7 +29,6 @@ var (
 	outputPty   string
 	testRWData  = []byte("goiiot/libserial")
 	testOptions = []Option{
-		WithBaudRate(1200),
 		WithDataBits(8),
 		WithParity(ParityNone),
 		WithReadTimeout(time.Second),
@@ -41,6 +40,8 @@ var (
 func init() {
 	flag.StringVar(&inputPty, "i", "", "input pty file path")
 	flag.StringVar(&outputPty, "o", "", "input pty file path")
+	baud := flag.Int("b", 0, "")
+
 	flag.Parse()
 
 	if inputPty == "" {
@@ -50,6 +51,12 @@ func init() {
 	if outputPty == "" {
 		panic("output pty is nil")
 	}
+
+	if *baud == 0 {
+		panic("baud rate is 0")
+	}
+
+	testOptions = append(testOptions, WithBaudRate(*baud))
 }
 
 func getSerialPort() (reader, writer *SerialPort) {
