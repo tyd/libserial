@@ -48,6 +48,7 @@ type _dcb struct {
 
 const (
 	_dcbSize         = uint32(unsafe.Sizeof(_dcb{}))
+	maskDataBits     = uint64(0)
 	maskBaudRate     = uint64(0)
 	softwareCtrlFlag = 0
 	hardwareCtrlFlag = 0

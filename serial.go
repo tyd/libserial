@@ -133,7 +133,7 @@ func WithBaudRate(rate int) Option {
 		c.baudRate = uint64(baudRate)
 
 		// clear baud rate flags and set new baud rate
-		c.controlOptions &= ^maskBaudRate
+		c.controlOptions &= ^uint64(maskBaudRate)
 		c.controlOptions |= uint64(baudRate)
 		return nil
 	}
@@ -147,7 +147,7 @@ func WithDataBits(d int) Option {
 		c.dataBits = byte(d)
 
 		// clear flags
-		c.controlOptions &= ^uint64(dataBits5 | dataBits6 | dataBits7 | dataBits8)
+		c.controlOptions &= ^uint64(maskDataBits)
 
 		switch d {
 		case 5:
@@ -175,11 +175,22 @@ func WithParity(p Parity) Option {
 		// clear flags
 		c.controlOptions &= ^uint64(ParityOdd | ParityMark | parityEnable)
 
+		// keep ParityMark and ParitySpace separated for darwin compatibility
+		if p == ParityMark {
+			c.controlOptions |= uint64(p) | parityEnable
+			return nil
+		}
+
+		if p == ParitySpace {
+			c.controlOptions |= uint64(p) | parityEnable
+			return nil
+		}
+
 		switch p {
 		case ParityNone:
 			// do nothing default is None
-		case ParityOdd, ParityEven, ParityMark, ParitySpace:
-			c.controlOptions |= (uint64(p) | parityEnable)
+		case ParityOdd, ParityEven:
+			c.controlOptions |= uint64(p) | parityEnable
 		default:
 			return fmt.Errorf("invalid parity mode: %v", p)
 		}

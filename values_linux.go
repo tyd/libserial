@@ -30,6 +30,8 @@ const (
 	termiosReqGet = uint(unix.TCGETS)
 	termiosReqSet = uint(unix.TCSETS)
 	maskBaudRate  = uint64(unix.CBAUD)
+	ParityMark    = Parity(unix.CMSPAR)
+	ParitySpace   = 0
 )
 
 var validBaudRates = map[int]uint32{

@@ -29,6 +29,8 @@ type termiosFieldType = uint64
 const (
 	termiosReqGet = uint(unix.TIOCGETA)
 	termiosReqSet = uint(unix.TIOCSETA)
+	ParityMark    = 0
+	ParitySpace   = 0
 )
 
 var (

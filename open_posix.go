@@ -45,6 +45,7 @@ func (s *SerialPort) open() error {
 		}
 	}()
 
+	// get posix timeout value (seconds / 10)
 	timeout := float64(0)
 	if s.readTimeout > 0 {
 		timeout = s.readTimeout.Seconds() / 10
