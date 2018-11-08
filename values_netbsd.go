@@ -52,5 +52,5 @@ var validBaudRates = map[int]uint64{
 	115200: unix.B115200,
 	230400: unix.B230400,
 	460800: unix.B460800,
-	921600:  unix.B921600,
+	921600: unix.B921600,
 }

@@ -9,6 +9,21 @@ Serial library for golang (no cgo)
 - Go 1.9+ (for `type alias`)
 - Git (required by Go)
 
+## Supported Platform
+
+- darwin
+  - arm64 amd64 arm 386
+- linux
+  - all go supported arch
+- freebsd
+  - all go supported arch
+- netbsd
+  - all go supported arch
+- openbsd
+  - all go supported arch
+- windows
+  - all go supported arch
+
 ## Usage
 
 **TL;DR**: you can find a full example in [cmd/libserial/main.go](./cmd/libserial/main.go)
