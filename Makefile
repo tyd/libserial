@@ -152,7 +152,7 @@ FILE_TEST_BIN = $(DIR_TEST)/$(BINARY).test
 FILE_COVERAGE = coverage.txt
 
 TEST_FLAGS := \
-	-v -race -failfast \
+	-v -race \
 	-covermode=atomic \
 	-coverprofile=$(FILE_COVERAGE)
 
