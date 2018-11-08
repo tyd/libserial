@@ -72,10 +72,10 @@ func (s *SerialPort) open() error {
 	}
 
 	tty := &unix.Termios{
-		Cflag:  unix.CREAD | unix.CLOCAL | termiosFieldType(s.controlOptions),
-		Iflag:  termiosFieldType(s.inputOptions),
-		Ispeed: termiosFieldType(s.baudRate),
-		Ospeed: termiosFieldType(s.baudRate),
+		Cflag:  unix.CREAD | unix.CLOCAL | termiosFlagType(s.controlOptions),
+		Iflag:  termiosFlagType(s.inputOptions),
+		Ispeed: termiosSpeedType(s.baudRate),
+		Ospeed: termiosSpeedType(s.baudRate),
 	}
 
 	if timeout == 0 {

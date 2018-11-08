@@ -134,13 +134,11 @@ func WithBaudRate(rate int) Option {
 		c.baudRate = uint64(baudRate)
 
 		// clear baud rate flags and set new baud rate
-		if runtime.GOOS == "darwin" {
-			// do nothing on darwin
-			return nil
+		if runtime.GOOS == "linux" {
+			c.controlOptions &= ^uint64(maskBaudRate)
+			c.controlOptions |= uint64(baudRate)
 		}
 
-		c.controlOptions &= ^uint64(maskBaudRate)
-		c.controlOptions |= uint64(baudRate)
 		return nil
 	}
 }

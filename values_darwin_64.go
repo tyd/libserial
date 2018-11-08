@@ -1,4 +1,4 @@
-// +build darwin,amd64
+// +build darwin,amd64 darwin,arm64
 
 /*
  * Copyright Go-IIoT (https://github.com/goiiot)
@@ -24,7 +24,8 @@ import (
 
 type Parity uint64
 type StopBit uint64
-type termiosFieldType = uint64
+type termiosFlagType = uint64
+type termiosSpeedType = uint64
 
 const (
 	termiosReqGet = uint(unix.TIOCGETA)

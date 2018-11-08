@@ -24,7 +24,8 @@ import (
 
 type Parity uint32
 type StopBit uint32
-type termiosFieldType = uint32
+type termiosFlagType = uint32
+type termiosSpeedType = uint32
 
 const (
 	termiosReqGet = uint(unix.TCGETS)
