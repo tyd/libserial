@@ -4,9 +4,21 @@
 
 Serial library for golang (no cgo)
 
+## Prerequisite
+
+- Go 1.9+ (for `type alias`)
+- Git (required by Go)
+
 ## Usage
 
 **TL;DR**: you can find a full example in [cmd/libserial/main.go](./cmd/libserial/main.go)
+
+0.Get this package with `go get` or `git clone`
+
+```bash
+go get -u github.com/goiiot/libserial
+# git clone https://github.com/goiiot/libserial
+```
 
 1.Import this package
 
@@ -34,9 +46,20 @@ if err != nil {
 
 ```go
 buf := make([]byte, 64)
-_, err := conn.Read(buf[:])
 
-conn.Write([]byte{data})
+_, err := conn.Read(buf[:])
+if err != nil { }
+
+_, err := conn.Write([]byte("{data}"))
+if err != nil { }
+```
+
+## Command line demo
+
+You can download and install `libserial` to your `$GOPATH/bin` for quick demo test
+
+```bash
+go get -u github.com/goiiot/libserial/cmd/libserial
 ```
 
 ## LICENSE

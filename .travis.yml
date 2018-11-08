@@ -27,8 +27,7 @@ install:
   - source ./.travis/install.sh
 
 before_script:
-  - export GO111MODULE=on
-  - make ensure
+  - export TEST_BAUD_RATE=1200
 
 script:
   - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then make style_check; fi
