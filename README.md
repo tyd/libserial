@@ -11,17 +11,17 @@ Serial library for golang (no cgo)
 
 ## Supported Platform
 
-- darwin
+- darwin (tested on amd64, thanks to [`travis`](https://travis-ci.com/goiiot/libserial))
   - arm64 amd64 arm 386
-- linux
+- linux (tested on amd64, thanks to [`travis`](https://travis-ci.com/goiiot/libserial))
   - all go supported arch
-- freebsd
+- windows (not tested see #1)
   - all go supported arch
-- netbsd
+- freebsd (not tested)
   - all go supported arch
-- openbsd
+- netbsd (not tested)
   - all go supported arch
-- windows
+- openbsd (not tested)
   - all go supported arch
 
 ## Usage
