@@ -126,6 +126,8 @@ func TestSerialPort_Flush(t *testing.T) {
 		t.Errorf("write to pty faild: %v", err)
 	}
 
+	time.Sleep(time.Second)
+
 	if err := r.Flush(); err != nil {
 		t.Errorf("flush port failed: %v", err)
 	}
