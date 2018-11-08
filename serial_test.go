@@ -72,7 +72,7 @@ func getSerialPort(options []Option) (reader, writer *SerialPort) {
 }
 
 func TestSerialPort_Readtimeout(t *testing.T) {
-	options := append([]Option{WithReadTimeout(time.Second)}, baseOptions...)
+	options := append([]Option{WithReadTimeout(2 * time.Second)}, baseOptions...)
 	r, w := getSerialPort(options)
 	defer func() {
 		r.Close()
