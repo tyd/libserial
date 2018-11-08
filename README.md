@@ -15,7 +15,7 @@ Serial library for golang (no cgo)
   - arm64 amd64 arm 386
 - linux (tested on amd64, thanks to [`travis`](https://travis-ci.com/goiiot/libserial))
   - all go supported arch
-- windows (not tested see #1)
+- windows (not tested, see [issue #1](https://github.com/goiiot/libserial/issues/1))
   - all go supported arch
 - freebsd (not tested)
   - all go supported arch
