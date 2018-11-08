@@ -26,7 +26,7 @@ Serial library for golang (no cgo)
 
 ## Usage
 
-**TL;DR**: you can find a full example in [cmd/libserial/main.go](./cmd/libserial/main.go)
+**TL;DR**: you can find a demo cli app in [cmd/libserial/main.go](./cmd/libserial/main.go)
 
 0.Get this package with `go get` or `git clone`
 
@@ -71,7 +71,7 @@ if err != nil { }
 
 ## Command line demo
 
-You can download and install `libserial` to your `$GOPATH/bin` for quick demo test
+You can download and install `libserial` to your `$GOPATH/bin` for quick demo test (`GOPATH` required)
 
 ```bash
 go get -u github.com/goiiot/libserial/cmd/libserial

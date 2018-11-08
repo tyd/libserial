@@ -180,11 +180,11 @@ func startReadFromPort() {
 }
 
 func init() {
-	flag.StringVar(&config.device, "dev", "", "serial device name(path)")
+	flag.StringVar(&config.device, "dev", "", "serial device name(path) (required)")
 	flag.IntVar(&config.baudRate, "b", 9600, "baud rate")
-	flag.IntVar(&config.dataBits, "d", 8, "data bits, one of: 5, 6, 7, 8")
-	flag.StringVar(&config.stopBits, "s", "1", "stop bits, one of: 1, 2, 1.5 (windows only)")
-	flag.StringVar(&config.parityMode, "p", "0", "parity mode, one of: none, odd, even, mark, space")
+	flag.IntVar(&config.dataBits, "d", 8, "data bits, one of 5, 6, 7, 8")
+	flag.StringVar(&config.stopBits, "s", "1", "stop bits, one of 1, 2, 1.5 (windows only)")
+	flag.StringVar(&config.parityMode, "p", "none", "parity mode, one of none, odd, even, mark, space")
 	flag.BoolVar(&config.swCtrl, "cs", false, "enable software flow control")
 	flag.BoolVar(&config.hwCtrl, "ch", false, "enable hardware flow control")
 	flag.StringVar(&suffix, "suffix", "", "suffix append to serial write")
