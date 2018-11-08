@@ -46,9 +46,9 @@ func (s *SerialPort) open() error {
 	}()
 
 	// get posix timeout value (seconds / 10)
-	timeout := float64(0)
+	timeout := int64(0)
 	if s.readTimeout > 0 {
-		timeout = s.readTimeout.Seconds() / 10
+		timeout = s.readTimeout.Nanoseconds() / 1e8
 		if timeout > math.MaxUint8 {
 			timeout = math.MaxUint8
 		}
@@ -57,10 +57,17 @@ func (s *SerialPort) open() error {
 	// check sys baud rate when baud rate not present
 	if s.baudRate == unix.B0 {
 		tty, err := unix.IoctlGetTermios(int(f.Fd()), termiosReqGet)
-		s.baudRate = uint64(tty.Cflag) & maskBaudRate
+		if err != nil {
+			return fmt.Errorf("fail to get serial port config: %v", err)
+		}
 
-		if err != nil || s.baudRate == unix.B0 {
-			return fmt.Errorf("can't determine serial port baud rate: %v", err)
+		s.baudRate = uint64(tty.Cflag) & maskBaudRate
+		if s.baudRate == unix.B0 {
+			s.baudRate = uint64(tty.Ispeed)
+		}
+
+		if s.baudRate == unix.B0 {
+			return fmt.Errorf("fail to determine serial port baud rate: %v", err)
 		}
 	}
 

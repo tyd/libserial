@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"io"
 	"testing"
 	"time"
 )
@@ -27,11 +28,11 @@ import (
 var (
 	inputPty    string
 	outputPty   string
+	readTimeout time.Duration
 	testRWData  = []byte("goiiot/libserial")
-	testOptions = []Option{
+	baseOptions = []Option{
 		WithDataBits(8),
 		WithParity(ParityNone),
-		WithReadTimeout(time.Second),
 		WithHardwareFlowControl(false),
 		WithSoftwareFlowControl(false),
 	}
@@ -40,6 +41,7 @@ var (
 func init() {
 	flag.StringVar(&inputPty, "i", "", "input pty file path")
 	flag.StringVar(&outputPty, "o", "", "input pty file path")
+	flag.DurationVar(&readTimeout, "t", 0, "read timeout")
 	baud := flag.Int("b", 0, "")
 
 	flag.Parse()
@@ -52,20 +54,16 @@ func init() {
 		panic("output pty is nil")
 	}
 
-	if *baud == 0 {
-		panic("baud rate is 0")
-	}
-
-	testOptions = append(testOptions, WithBaudRate(*baud))
+	baseOptions = append(baseOptions, WithBaudRate(*baud))
 }
 
-func getSerialPort() (reader, writer *SerialPort) {
-	w, err := Open(inputPty, testOptions...)
+func getSerialPort(options []Option) (reader, writer *SerialPort) {
+	w, err := Open(inputPty, options...)
 	if err != nil {
 		panic(fmt.Sprintf("fatal err: %v", err))
 	}
 
-	r, err := Open(outputPty, testOptions...)
+	r, err := Open(outputPty, options...)
 	if err != nil {
 		panic(fmt.Sprintf("fatal err: %v", err))
 	}
@@ -73,8 +71,27 @@ func getSerialPort() (reader, writer *SerialPort) {
 	return r, w
 }
 
+func TestSerialPort_Readtimeout(t *testing.T) {
+	options := append([]Option{WithReadTimeout(time.Second)}, baseOptions...)
+	r, w := getSerialPort(options)
+	defer func() {
+		r.Close()
+		w.Close()
+	}()
+
+	start := time.Now()
+	i, err := r.Read(make([]byte, 1))
+	if err != nil && err != io.EOF || i != 0 {
+		t.Errorf("read timeout failed: err = %v, i = %v", err, i)
+	}
+
+	if duration := time.Now().Sub(start); duration < time.Second {
+		t.Errorf("read timeout not correct")
+	}
+}
+
 func TestSerialPort_ReadWrite(t *testing.T) {
-	r, w := getSerialPort()
+	r, w := getSerialPort(baseOptions)
 	defer func() {
 		r.Close()
 		w.Close()
@@ -99,7 +116,7 @@ func TestSerialPort_ReadWrite(t *testing.T) {
 }
 
 func TestSerialPort_Flush(t *testing.T) {
-	r, w := getSerialPort()
+	r, w := getSerialPort(baseOptions)
 	defer func() {
 		r.Close()
 		w.Close()

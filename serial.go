@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -133,6 +134,11 @@ func WithBaudRate(rate int) Option {
 		c.baudRate = uint64(baudRate)
 
 		// clear baud rate flags and set new baud rate
+		if runtime.GOOS == "darwin" {
+			// do nothing on darwin
+			return nil
+		}
+
 		c.controlOptions &= ^uint64(maskBaudRate)
 		c.controlOptions |= uint64(baudRate)
 		return nil
@@ -140,7 +146,7 @@ func WithBaudRate(rate int) Option {
 }
 
 // WithDataBits set the data bits for SerialPort
-// available values are {5, 6, 7, 8, 9}
+// available values are {5, 6, 7, 8}
 // default is 8
 func WithDataBits(d int) Option {
 	return func(c *SerialPort) error {

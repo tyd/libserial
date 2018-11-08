@@ -29,6 +29,7 @@ type termiosFieldType = uint64
 const (
 	termiosReqGet = uint(unix.TIOCGETA)
 	termiosReqSet = uint(unix.TIOCSETA)
+	maskBaudRate  = uint64(0)
 	ParityMark    = Parity(0)
 	ParitySpace   = Parity(0)
 )
@@ -42,16 +43,6 @@ func mkFlushFunc(fd uintptr) func() error {
 
 		// set serial port again for input/output flush
 		return unix.IoctlSetTermios(int(fd), termiosReqSet+unix.TCSAFLUSH, tty)
-	}
-}
-
-var (
-	maskBaudRate = uint64(0)
-)
-
-func init() {
-	for _, v := range validBaudRates {
-		maskBaudRate |= v
 	}
 }
 
