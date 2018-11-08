@@ -42,7 +42,7 @@ func mkFlushFunc(fd uintptr) func() error {
 		}
 
 		// set serial port again for input/output flush
-		return unix.IoctlSetTermios(int(fd), termiosReqSet+unix.TCSAFLUSH, tty)
+		return unix.IoctlSetTermios(int(fd), unix.TIOCSETAF, tty)
 	}
 }
 

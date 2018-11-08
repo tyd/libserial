@@ -62,6 +62,11 @@ You can download and install `libserial` to your `$GOPATH/bin` for quick demo te
 go get -u github.com/goiiot/libserial/cmd/libserial
 ```
 
+## References
+
+- [termios(3) - Linux man page](https://linux.die.net/man/3/termios)
+- [tty(4) - FreeBSD Manual Page](https://www.freebsd.org/cgi/man.cgi?query=tty&sektion=4)
+
 ## LICENSE
 
 [![GitHub license](https://img.shields.io/github/license/goiiot/libserial.svg)](https://github.com/goiiot/libserial/blob/master/LICENSE.txt)

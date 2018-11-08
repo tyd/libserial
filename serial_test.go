@@ -40,7 +40,7 @@ var (
 
 func init() {
 	flag.StringVar(&inputPty, "i", "", "input pty file path")
-	flag.StringVar(&outputPty, "o", "", "input pty file path")
+	flag.StringVar(&outputPty, "o", "", "output pty file path")
 	flag.DurationVar(&readTimeout, "t", 0, "read timeout")
 	baud := flag.Int("b", 0, "")
 
@@ -80,7 +80,7 @@ func TestSerialPort_Readtimeout(t *testing.T) {
 	}()
 
 	start := time.Now()
-	i, err := r.Read(make([]byte, 1))
+	i, err := r.Read(make([]byte, 128))
 	if err != nil && err != io.EOF || i != 0 {
 		t.Errorf("read timeout failed: err = %v, i = %v", err, i)
 	}
@@ -105,8 +105,7 @@ func TestSerialPort_ReadWrite(t *testing.T) {
 	time.Sleep(time.Second)
 
 	buf := make([]byte, len(testRWData))
-	_, err = r.Read(buf)
-	if err != nil {
+	if _, err = r.Read(buf); err != nil {
 		t.Errorf("read data failed: %v", err)
 	}
 
@@ -116,13 +115,25 @@ func TestSerialPort_ReadWrite(t *testing.T) {
 }
 
 func TestSerialPort_Flush(t *testing.T) {
-	r, w := getSerialPort(baseOptions)
+	options := append([]Option{WithReadTimeout(time.Second)}, baseOptions...)
+	r, w := getSerialPort(options)
 	defer func() {
 		r.Close()
 		w.Close()
 	}()
 
-	if errR, errW := r.Flush(), w.Flush(); errR != nil || errW != nil {
-		t.Errorf("flush port failed: r - %v, w - %v", errR, errW)
+	if _, err := w.Write(testRWData); err != nil {
+		t.Errorf("write to pty faild: %v", err)
+	}
+
+	if err := r.Flush(); err != nil {
+		t.Errorf("flush port failed: %v", err)
+	}
+
+	time.Sleep(time.Second)
+
+	buf := make([]byte, 128)
+	if n, err := r.Read(buf); err == nil {
+		t.Errorf("flush port failed, data still there: %v", string(buf[:n]))
 	}
 }
