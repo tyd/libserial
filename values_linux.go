@@ -27,14 +27,19 @@ type StopBit uint32
 type termiosFieldType = uint32
 
 const (
-	termiosReqGet    = uint(unix.TCGETS)
-	termiosReqSet    = uint(unix.TCSETS)
-	termiosFlush     = uintptr(unix.TCFLSH)
-	termiosFlushType = uintptr(unix.TCIOFLUSH)
-	maskBaudRate     = uint64(unix.CBAUD)
-	ParityMark       = Parity(unix.CMSPAR)
-	ParitySpace      = 0
+	termiosReqGet = uint(unix.TCGETS)
+	termiosReqSet = uint(unix.TCSETS)
+	maskBaudRate  = uint64(unix.CBAUD)
+	ParityMark    = Parity(unix.CMSPAR)
+	ParitySpace   = 0
 )
+
+func mkFlushFunc(fd uintptr) func() error {
+	return func() error {
+		_, _, err := unix.Syscall(unix.SYS_IOCTL, fd, unix.TCFLSH, unix.TCIOFLUSH)
+		return err
+	}
+}
 
 var validBaudRates = map[int]uint32{
 	0:       unix.B0, // detect baud rate automatically

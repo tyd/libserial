@@ -27,13 +27,23 @@ type StopBit uint64
 type termiosFieldType = uint64
 
 const (
-	termiosReqGet    = uint(unix.TIOCGETA)
-	termiosReqSet    = uint(unix.TIOCSETA)
-	termiosFlush     = uintptr(unix.TIOCFLUSH)
-	termiosFlushType = uintptr(0) // https://en.wikibooks.org/wiki/Serial_Programming/Unix_V7
-	ParityMark       = Parity(0)
-	ParitySpace      = Parity(0)
+	termiosReqGet = uint(unix.TIOCGETA)
+	termiosReqSet = uint(unix.TIOCSETA)
+	ParityMark    = Parity(0)
+	ParitySpace   = Parity(0)
 )
+
+func mkFlushFunc(fd uintptr) func() error {
+	return func() error {
+		tty, err := unix.IoctlGetTermios(int(fd), termiosReqGet)
+		if err != nil {
+			return err
+		}
+
+		// set serial port again for input/output flush
+		return unix.IoctlSetTermios(int(fd), termiosReqSet+unix.TCSAFLUSH, tty)
+	}
+}
 
 var (
 	maskBaudRate = uint64(0)

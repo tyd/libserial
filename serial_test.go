@@ -73,8 +73,12 @@ func getSerialPort() (reader, writer *SerialPort) {
 	return r, w
 }
 
-func TestReadWrite(t *testing.T) {
+func TestSerialPort_ReadWrite(t *testing.T) {
 	r, w := getSerialPort()
+	defer func() {
+		r.Close()
+		w.Close()
+	}()
 
 	_, err := w.Write(testRWData)
 	if err != nil {
@@ -91,5 +95,17 @@ func TestReadWrite(t *testing.T) {
 
 	if !bytes.Equal(testRWData, buf) {
 		t.Errorf("target: %v, result: %v", testRWData, buf)
+	}
+}
+
+func TestSerialPort_Flush(t *testing.T) {
+	r, w := getSerialPort()
+	defer func() {
+		r.Close()
+		w.Close()
+	}()
+
+	if errR, errW := r.Flush(), w.Flush(); errR != nil || errW != nil {
+		t.Errorf("flush port failed: r - %v, w - %v", errR, errW)
 	}
 }
