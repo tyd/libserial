@@ -36,7 +36,10 @@ const (
 
 func mkFlushFunc(fd uintptr) func() error {
 	return func() error {
-		_, _, err := unix.Syscall(unix.SYS_IOCTL, fd, unix.TCFLSH, unix.TCIOFLUSH)
+		r, _, err := unix.Syscall(unix.SYS_IOCTL, fd, unix.TCFLSH, unix.TCIOFLUSH)
+		if r == 0 {
+			return nil
+		}
 		return err
 	}
 }
