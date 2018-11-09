@@ -126,6 +126,13 @@ func WithReadTimeout(timeout time.Duration) Option {
 // default is 9600
 func WithBaudRate(rate int) Option {
 	return func(c *SerialPort) error {
+		// do not check baud rate on windows
+		if runtime.GOOS == "windows" {
+			c.baudRate = uint64(rate)
+			return nil
+		}
+
+		// check baud rate on non windows platform
 		baudRate, ok := validBaudRates[rate]
 		if !ok {
 			return fmt.Errorf("invalid baud rate: %v", rate)

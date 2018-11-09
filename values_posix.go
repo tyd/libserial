@@ -21,18 +21,13 @@ package libserial
 import "golang.org/x/sys/unix"
 
 const (
-	StopBitOne = StopBit(0) // default to stop bit one
-	StopBitTwo = StopBit(unix.CSTOPB)
-)
-
-const (
-	parityEnable = unix.PARENB
-	ParityNone   = Parity(0)
-	ParityOdd    = Parity(unix.PARODD)
-	ParityEven   = unix.PARENB // enable parity will default to even mode
-)
-
-const (
+	StopBitOne       = StopBit(0) // default to stop bit one
+	StopBitTwo       = StopBit(unix.CSTOPB)
+	parityEnable     = unix.PARENB
+	ParityNone       = Parity(0)
+	ParityOdd        = Parity(unix.PARODD)
+	ParityEven       = unix.PARENB // enable parity will default to even mode
+	maskDataBits     = unix.CSIZE
 	serialFileFlag   = unix.O_RDWR | unix.O_NOCTTY | unix.O_NONBLOCK
 	softwareCtrlFlag = unix.IXON | unix.IXOFF | unix.IXANY
 	hardwareCtrlFlag = unix.CRTSCTS
@@ -40,8 +35,4 @@ const (
 	dataBits6        = unix.CS6
 	dataBits7        = unix.CS7
 	dataBits8        = unix.CS8
-)
-
-const (
-	maskDataBits = unix.CSIZE
 )

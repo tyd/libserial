@@ -18,34 +18,12 @@
 
 package libserial
 
-import (
-	"golang.org/x/sys/unix"
-)
+import "golang.org/x/sys/unix"
 
 type Parity uint32
 type StopBit uint32
 type termiosFlagType = uint32
 type termiosSpeedType = uint32
-
-const (
-	termiosReqGet = uint(unix.TIOCGETA)
-	termiosReqSet = uint(unix.TIOCSETA)
-	maskBaudRate  = uint64(0)
-	ParityMark    = Parity(0)
-	ParitySpace   = Parity(0)
-)
-
-func mkFlushFunc(fd uintptr) func() error {
-	return func() error {
-		tty, err := unix.IoctlGetTermios(int(fd), termiosReqGet)
-		if err != nil {
-			return err
-		}
-
-		// set serial port again for input/output flush
-		return unix.IoctlSetTermios(int(fd), unix.TIOCSETAF, tty)
-	}
-}
 
 var validBaudRates = map[int]uint64{
 	0:      unix.B0, // detect baud rate automatically

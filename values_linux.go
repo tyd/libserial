@@ -18,9 +18,7 @@
 
 package libserial
 
-import (
-	"golang.org/x/sys/unix"
-)
+import "golang.org/x/sys/unix"
 
 type Parity uint32
 type StopBit uint32
