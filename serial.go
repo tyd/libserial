@@ -61,6 +61,11 @@ func (s *SerialPort) Read(data []byte) (int, error) {
 	return s.f.Read(data)
 }
 
+// ReadAt reads len(data) bytes from the File starting at byte offset off.
+func (s *SerialPort) ReadAt(data []byte, off int64) (int, error) {
+	return s.f.ReadAt(data, off)
+}
+
 // Close serial connection
 func (s *SerialPort) Close() error {
 	return s.f.Close()
