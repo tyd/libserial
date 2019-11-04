@@ -66,6 +66,19 @@ func (s *SerialPort) ReadAt(data []byte, off int64) (int, error) {
 	return s.f.ReadAt(data, off)
 }
 
+// BytesWaiting returns the number of bytes waiting to be read
+func (s *SerialPort) BytesWaiting() (int, error) {
+
+	fi, err := s.f.Stat()
+
+	// Could not obtain stat, handle error
+	if err != nil {
+		return 0, err
+	}
+
+	return int(fi.Size()), nil
+}
+
 // Close serial connection
 func (s *SerialPort) Close() error {
 	return s.f.Close()
